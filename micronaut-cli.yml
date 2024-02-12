@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.vitu
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [ app-name, data, data-jpa, flyway, http-client-test, java, java-application, jdbc-hikari, junit, logback, lombok, maven, maven-enforcer-plugin, micronaut-aot, micronaut-http-validation, openapi, postgres, properties, readme, serialization-jackson, shade, static-resources, swagger-ui, test-resources, tomcat-server, validation ]
