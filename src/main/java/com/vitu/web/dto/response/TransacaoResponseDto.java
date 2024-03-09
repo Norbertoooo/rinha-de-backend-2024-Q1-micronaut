@@ -1,9 +1,8 @@
 package com.vitu.web.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.vitu.domain.TipoTransacao;
 import io.micronaut.serde.annotation.Serdeable;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,11 +19,12 @@ public class TransacaoResponseDto {
 
     private Long valor;
 
-    private TipoTransacao tipo;
+    private String tipo;
 
     private String descricao;
 
     @JsonProperty("realizada_em")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
     private ZonedDateTime realizadaEm;
 
 }

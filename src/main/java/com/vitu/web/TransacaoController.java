@@ -2,7 +2,7 @@ package com.vitu.web;
 
 import com.vitu.service.TransacaoService;
 import com.vitu.web.dto.request.TransacaoRequestDto;
-import com.vitu.web.dto.response.CriarNovaTransacaoResponseDto;
+import com.vitu.web.dto.response.NovaTransacaoResponseDto;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -23,11 +23,11 @@ public class TransacaoController {
     TransacaoService transacaoService;
 
     @Post(uri = "/{id}/transacoes", produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<CriarNovaTransacaoResponseDto> criarNovaTransacao(@PathVariable Long id,
-                                                                          @Body @Valid TransacaoRequestDto transacaoRequestDto) {
+    public HttpResponse<NovaTransacaoResponseDto> criarNovaTransacao(@PathVariable Long id,
+                                                                     @Body @Valid TransacaoRequestDto transacaoRequestDto) {
         log.info("Recendo requisição para criação de nova transação: {}", transacaoRequestDto);
-        CriarNovaTransacaoResponseDto criarNovaTransacaoResponseDto = transacaoService.efetuarTransacao(id, transacaoRequestDto);
-        return HttpResponse.ok(criarNovaTransacaoResponseDto);
+        NovaTransacaoResponseDto novaTransacaoResponseDto = transacaoService.efetuarTransacao(id, transacaoRequestDto);
+        return HttpResponse.ok(novaTransacaoResponseDto);
     }
 
 }

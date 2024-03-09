@@ -1,12 +1,12 @@
 version: "3"
 
 services:
-  micronaut-bd:
-    container_name: micronault-db
+  micronaut-bd-no-migration:
+    container_name: micronaut_db_no_migration
     image: postgres:latest
     environment:
-      POSTGRES_PASSWORD: micronault_db
-      POSTGRES_USER: micronault_db
-      POSTGRES_DB: micronault_db
+      POSTGRES_PASSWORD: micronaut_db
+      POSTGRES_USER: micronaut_db
+      POSTGRES_DB: micronaut_db
     ports:
       - "5432:5432"

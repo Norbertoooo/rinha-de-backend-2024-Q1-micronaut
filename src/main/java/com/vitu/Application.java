@@ -1,15 +1,8 @@
 package com.vitu;
 
 import io.micronaut.runtime.Micronaut;
-import io.swagger.v3.oas.annotations.*;
-import io.swagger.v3.oas.annotations.info.*;
 
-@OpenAPIDefinition(
-        info = @Info(
-                title = "rinha-de-backend-2024-q1-micronaut",
-                version = "0.0"
-        )
-)
+
 public class Application {
 
     public static void main(String[] args) {

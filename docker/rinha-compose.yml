@@ -4,12 +4,15 @@ services:
   micronaut-bd:
     container_name: micronaut-db
     image: postgres:latest
+    command: postgres -c checkpoint_timeout=600 -c max_wal_size=4096 -c synchronous_commit=0 -c fsync=0 -c full_page_writes=0
     environment:
       POSTGRES_PASSWORD: micronaut_db
       POSTGRES_USER: micronaut_db
       POSTGRES_DB: micronaut_db
     ports:
       - "5432:5432"
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/script.sql
     deploy:
       resources:
         limits:
@@ -17,12 +20,17 @@ services:
           # aqui declarados é de 1.5 unidades de CPU e 550MB
           # de memória. A distribuição feita aqui é apenas
           # um exemplo – distribua como quiser.
-          cpus: "0.13"
-          memory: "140MB"
+          cpus: "0.5"
+          memory: "335MB"
 
   micronaut-one: &micronaut-api
     hostname: micronaut-one
+    image: rinha-de-backend-2024-q1-micronaut:latest
     container_name: micronaut-one
+    environment:
+      datasources.default.url: jdbc:postgresql://micronaut-db:5432/micronaut_db
+      datasources.default.minimum-idle: 0
+      datasources.default.maximum-pool-size: 10
     ports:
       - "8081:8080"
     depends_on:
@@ -30,8 +38,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.6"
-          memory: "200MB"
+          cpus: "0.4"
+          memory: "100MB"
 
   micronaut-two:
     <<: *micronaut-api
@@ -40,23 +48,23 @@ services:
     ports:
       - "8082:8080"
 
-  nginx:
-    container_name: nginx-load-balance
+  nginx-micronaut-load-balance:
+    container_name: nginx-micronaut-load-balance
     image: nginx:latest
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - micronault-one
-      - micronault-two
+      - micronaut-one
+      - micronaut-two
     ports:
       - "9999:9999"
     deploy:
       resources:
         limits:
-          cpus: "0.17"
-          memory: "10MB"
+          cpus: "0.2"
+          memory: "15MB"
 
 networks:
   default:
     driver: bridge
-    name: rinha-nginx-2024q1
+    name: rinha-nginx-micronaut-2024q1

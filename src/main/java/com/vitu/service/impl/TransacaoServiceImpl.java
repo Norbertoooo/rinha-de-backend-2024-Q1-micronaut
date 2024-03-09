@@ -8,10 +8,11 @@ import com.vitu.repository.TransacaoRepository;
 import com.vitu.service.ClienteService;
 import com.vitu.service.TransacaoService;
 import com.vitu.web.dto.request.TransacaoRequestDto;
-import com.vitu.web.dto.response.CriarNovaTransacaoResponseDto;
+import com.vitu.web.dto.response.NovaTransacaoResponseDto;
 import io.micronaut.data.model.Pageable;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
@@ -19,6 +20,7 @@ import java.util.List;
 
 @Slf4j
 @Singleton
+@Transactional
 public class TransacaoServiceImpl implements TransacaoService {
 
     @Inject
@@ -28,36 +30,40 @@ public class TransacaoServiceImpl implements TransacaoService {
     ClienteService clienteService;
 
     @Override
-    public CriarNovaTransacaoResponseDto efetuarTransacao(Long clienteId, TransacaoRequestDto transacaoRequestDto) {
+    public NovaTransacaoResponseDto efetuarTransacao(Long clienteId, TransacaoRequestDto transacaoRequestDto) {
+
+        log.info("Processando nova transação: {} - clienteId: {}", transacaoRequestDto, clienteId);
 
         Cliente cliente = clienteService.obterClientePorId(clienteId);
 
-        if (TipoTransacao.C.getValor().equals(transacaoRequestDto.getTipo())) {
-
-            cliente.setSaldoInicial(cliente.getSaldoInicial() + (transacaoRequestDto.getValor() * 100));
+        if (TipoTransacao.C.equals(transacaoRequestDto.getTipo())) {
+            log.info("Processando transação de crédito: {}", transacaoRequestDto);
+            cliente.setSaldo(cliente.getSaldo() + (transacaoRequestDto.getValor().longValue()));
 
             this.salvar(transacaoRequestDto,cliente);
 
             clienteService.atualizar(cliente);
 
-            return CriarNovaTransacaoResponseDto.builder()
-                    .saldo(cliente.getSaldoInicial())
+            return NovaTransacaoResponseDto.builder()
+                    .saldo(cliente.getSaldo())
                     .limite(cliente.getLimite())
                     .build();
         }
 
-        if (cliente.getLimite() < (transacaoRequestDto.getValor() * 100) + cliente.getSaldoInicial()) {
+        log.info("Processando transação de débito: {}", transacaoRequestDto);
+
+        if (cliente.getSaldo() - transacaoRequestDto.getValor().longValue() < cliente.getLimite() * -1) {
             throw new SaldoInconsistenteException();
         }
 
-        cliente.setSaldoInicial(cliente.getSaldoInicial() - (transacaoRequestDto.getValor() * 100));
+        cliente.setSaldo(cliente.getSaldo() - transacaoRequestDto.getValor().longValue());
 
         this.salvar(transacaoRequestDto, cliente);
 
         clienteService.atualizar(cliente);
 
-        return CriarNovaTransacaoResponseDto.builder()
-                .saldo(cliente.getSaldoInicial())
+        return NovaTransacaoResponseDto.builder()
+                .saldo(cliente.getSaldo())
                 .limite(cliente.getLimite())
                 .build();
     }
@@ -66,17 +72,18 @@ public class TransacaoServiceImpl implements TransacaoService {
     public List<Transacao> obterTransacoesPorDataDesc(Long clienteId) {
         Cliente cliente = clienteService.obterClientePorId(clienteId);
         return transacaoRepository
-                .findAllByClienteOrderByRealizadaEmDesc(cliente, Pageable.from(0, 10))
+                .findAllByClienteOrderByDataDesc(cliente, Pageable.from(0, 10))
                 .getContent();
     }
 
     private Transacao salvar(TransacaoRequestDto transacaoRequestDto, Cliente cliente) {
 
+        log.info("Salvando transacao: {} - clienteId: {}", transacaoRequestDto, cliente);
         Transacao build = Transacao.builder()
-                .valor(transacaoRequestDto.getValor())
-                .tipo(TipoTransacao.getTipo(transacaoRequestDto.getTipo()))
+                .valor(transacaoRequestDto.getValor().longValue())
+                .tipo(transacaoRequestDto.getTipo())
                 .descricao(transacaoRequestDto.getDescricao())
-                .realizadaEm(ZonedDateTime.now())
+                .data(ZonedDateTime.now())
                 .cliente(cliente)
                 .build();
 

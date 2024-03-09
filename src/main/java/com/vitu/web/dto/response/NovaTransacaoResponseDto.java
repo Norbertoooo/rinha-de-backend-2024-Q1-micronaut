@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @Serdeable
-public class CriarNovaTransacaoResponseDto {
+public class NovaTransacaoResponseDto {
 
     private Long limite;
     private Long saldo;
