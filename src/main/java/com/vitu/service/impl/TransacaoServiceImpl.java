@@ -1,12 +1,11 @@
 package com.vitu.service.impl;
 
 import com.vitu.domain.Cliente;
-import com.vitu.domain.TipoTransacao;
 import com.vitu.domain.Transacao;
-import com.vitu.exception.SaldoInconsistenteException;
 import com.vitu.repository.TransacaoRepository;
 import com.vitu.service.ClienteService;
 import com.vitu.service.TransacaoService;
+import com.vitu.strategy.TransacaoStrategy;
 import com.vitu.web.dto.request.TransacaoRequestDto;
 import com.vitu.web.dto.response.NovaTransacaoResponseDto;
 import io.micronaut.data.model.Pageable;
@@ -17,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Singleton
@@ -29,6 +29,9 @@ public class TransacaoServiceImpl implements TransacaoService {
     @Inject
     ClienteService clienteService;
 
+    @Inject
+    Map<String, TransacaoStrategy> transacaoStrategyMap;
+
     @Override
     public NovaTransacaoResponseDto efetuarTransacao(Long clienteId, TransacaoRequestDto transacaoRequestDto) {
 
@@ -36,27 +39,8 @@ public class TransacaoServiceImpl implements TransacaoService {
 
         Cliente cliente = clienteService.obterClientePorId(clienteId);
 
-        if (TipoTransacao.C.equals(transacaoRequestDto.getTipo())) {
-            log.info("Processando transação de crédito: {}", transacaoRequestDto);
-            cliente.setSaldo(cliente.getSaldo() + (transacaoRequestDto.getValor().longValue()));
-
-            this.salvar(transacaoRequestDto,cliente);
-
-            clienteService.atualizar(cliente);
-
-            return NovaTransacaoResponseDto.builder()
-                    .saldo(cliente.getSaldo())
-                    .limite(cliente.getLimite())
-                    .build();
-        }
-
-        log.info("Processando transação de débito: {}", transacaoRequestDto);
-
-        if (cliente.getSaldo() - transacaoRequestDto.getValor().longValue() < cliente.getLimite() * -1) {
-            throw new SaldoInconsistenteException();
-        }
-
-        cliente.setSaldo(cliente.getSaldo() - transacaoRequestDto.getValor().longValue());
+        transacaoStrategyMap.get(transacaoRequestDto.getTipo().name())
+                .efetuarTransacao(cliente, transacaoRequestDto);
 
         this.salvar(transacaoRequestDto, cliente);
 
