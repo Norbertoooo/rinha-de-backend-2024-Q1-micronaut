@@ -4,71 +4,40 @@
 Link da rinha: https://github.com/zanfranceschi/rinha-de-backend-2024-q1
 
 
+## Anotações pessoais
+Aqui trago algumas opiniões pessoais sobre o desenvolvimento com as ferramentas utilizadas
+
+
+- O framework se mostra de fato como se propõe, algo simples e direto tanto na suas anotações como nas dependências
+
+- É incrível ver na prática o quanto o fato de evitar reflection impacta no artefato final
+
+- O resultado é incrível, uma aplicação em java rodando na graalvm consumir no pico menos de 50Mb é surpreendente e sem
+quase perder performance
+
+- A parte de desenvovimento foi tranquilo, exatamente devido à familiaridade com spring, mas a parte de empacotar 
+para rodar na graalvm, deu muita dor de cabeça!, pois algumas dependências por sei lá que motivo, impedia da aplicação
+iniciar após empacotar e subir no container
+
+- No começo tentei usar o micronaut-data-jpa e flyway, mas tive que retirar exatamente pelo problema acima, resultando
+em usar o micronaut-data-jdbc
+
+- Nem tudo são flores, o ganho que se tem no artefato final é incrivel, mas o tempo de build da imagem para graalvm é 
+bem mais demorado 
+
+- O tamanho da imagem docker também surpreendeu, menos de 100 MB
+
+- Creio que deva existir uma versão estável que não aconteça os problemas que tive, dessa forma vejo um framework com
+apenas ganhos
+
+- Alguns dados para comparação com a versão em spring
+  
+- | Recurso       | Spring | Micronaut |
+  |---------------|--------|-----------|
+  | Memória       | 200    |     50    |
+  | Imagem docker | 200.23 |   98.68   |
 
 
 
-
-## Micronaut 4.3.1 Documentation
-
-- [User Guide](https://docs.micronaut.io/4.3.1/guide/index.html)
-- [API Reference](https://docs.micronaut.io/4.3.1/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/4.3.1/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
-
----
-
-- [Micronaut Maven Plugin documentation](https://micronaut-projects.github.io/micronaut-maven-plugin/latest/)
-
-## Feature openapi documentation
-
-- [Micronaut OpenAPI Support documentation](https://micronaut-projects.github.io/micronaut-openapi/latest/guide/index.html)
-
-- [https://www.openapis.org](https://www.openapis.org)
-
-## Feature maven-enforcer-plugin documentation
-
-- [https://maven.apache.org/enforcer/maven-enforcer-plugin/](https://maven.apache.org/enforcer/maven-enforcer-plugin/)
-
-## Feature tomcat-server documentation
-
-- [Micronaut Tomcat Server documentation](https://micronaut-projects.github.io/micronaut-servlet/1.0.x/guide/index.html#tomcat)
-
-## Feature test-resources documentation
-
-- [Micronaut Test Resources documentation](https://micronaut-projects.github.io/micronaut-test-resources/latest/guide/)
-
-## Feature lombok documentation
-
-- [Micronaut Project Lombok documentation](https://docs.micronaut.io/latest/guide/index.html#lombok)
-
-- [https://projectlombok.org/features/all](https://projectlombok.org/features/all)
-
-## Feature swagger-ui documentation
-
-- [Micronaut Swagger UI documentation](https://micronaut-projects.github.io/micronaut-openapi/latest/guide/index.html)
-
-- [https://swagger.io/tools/swagger-ui/](https://swagger.io/tools/swagger-ui/)
-
-## Feature serialization-jackson documentation
-
-- [Micronaut Serialization Jackson Core documentation](https://micronaut-projects.github.io/micronaut-serialization/latest/guide/)
-
-## Feature jdbc-hikari documentation
-
-- [Micronaut Hikari JDBC Connection Pool documentation](https://micronaut-projects.github.io/micronaut-sql/latest/guide/index.html#jdbc)
-
-## Feature micronaut-aot documentation
-
-- [Micronaut AOT documentation](https://micronaut-projects.github.io/micronaut-aot/latest/guide/)
-
-## Feature flyway documentation
-
-- [Micronaut Flyway Database Migration documentation](https://micronaut-projects.github.io/micronaut-flyway/latest/guide/index.html)
-
-- [https://flywaydb.org/](https://flywaydb.org/)
-
-## Feature validation documentation
-
-- [Micronaut Validation documentation](https://micronaut-projects.github.io/micronaut-validation/latest/guide/)
 
 
